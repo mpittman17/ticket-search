@@ -1,0 +1,4 @@
+function preparePage(){
+	readyUI();
+	buildUser();
+}
