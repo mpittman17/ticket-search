@@ -12,7 +12,7 @@ function buildUser(){
 		success : function (result) {
 		   stubhub_auth_token = window.btoa(result['consumer_key'] + ":" + result['consumer_secret']);
 		   user_email_address = result['email_address'];
-		   changeView('login');
+		   changeView('event');
 		},
 		error : function () {
 		   alert("error");

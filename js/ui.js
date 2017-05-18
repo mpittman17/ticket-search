@@ -1,5 +1,19 @@
+var event_results_table;
+var current_event;
+
 //Initial load/setup
 function readyUI(){
+	event_results_table = $('#event_results_table').DataTable({
+	    "columns": [
+		{ "width": "15%" },
+		{ "width": "70%" },
+		{ "width": "15%" }
+	  ]
+	});
+	populateTeamSelect();
+	$("#home_breadcrumb").click(function() {
+		changeView('event');
+	});
 	$("#stubhub_login_button").click(function() {
 		var password = $( "#stubhub_pw" ).val();
 		getStubhubUserToken(stubhub_auth_token, user_email_address, password);
@@ -27,6 +41,9 @@ function readyUI(){
 		}
 		filterTickets(filters);
 	});
+	$("#clear_tickets_filters_button").click(function() {
+		changeView('ticket');
+	});
 }
 
 //Switch from one view to another
@@ -40,14 +57,16 @@ function changeView(view){
 	if(view == 'event'){
 		hideStubhubLogin();
 		hideStubhubTicketSearch();
-		populateTeamSelect();
 		showStubhubEventSearch();
+		$("#home_breadcrumb").siblings().remove();
+		clearSeatingChart();
 	}
 	if(view == 'ticket'){
 		hideStubhubEventSearch();
 		hideStubhubLogin();
-		populateSectionSelect();
-		populateRowSelect();
+		getTickets(current_event.id);
+		showEventBreadcrumb();
+		loadSeatingChart();
 		showStubhubTicketSearch();
 	}
 	if(view == 'buy'){
@@ -63,14 +82,6 @@ function populateTeamSelect(){
 	$("#team_select").append(teams_html);
 }
 
-function populateSectionSelect(){
-	
-}
-
-function populateRowSelect(){
-	
-}
-
 //Visibility Functions
 function hideStubhubLogin(){
 	$("#stubhub_login").hide();
@@ -81,23 +92,24 @@ function showStubhubLogin(){
 }
 
 function hideStubhubEventSearch(){
-	$("#stubhub_event_search").hide();
+	$("#stubhub_event_search").addClass('hidden');
 }
 
 function showStubhubEventSearch(){
-	$("#stubhub_event_search").show();
+	$("#stubhub_event_search").removeClass('hidden');
 }
 
 function clearEventResults(){
-	$("#event_results_rows").empty();
+	event_results_table.clear();
+	event_results_table.draw();
 }
 
 function hideStubhubTicketSearch(){
-	$("#stubhub_ticket_search").hide();
+	$("#stubhub_ticket_search").addClass('hidden');;
 }
 
 function showStubhubTicketSearch(){
-	$("#stubhub_ticket_search").show();
+	$("#stubhub_ticket_search").removeClass('hidden');
 }
 
 function clearTicketResults(){
@@ -110,4 +122,32 @@ function hideBuyModal(){
 
 function showBuyModal(){
 	$('#buy_modal').modal('show');
+}
+
+function showEventBreadcrumb(){
+	if(!$("#event_breadcrumb").hasClass('active')){
+		$("#nav_breadcrumbs").append('<li id="event_breadcrumb" class="active"><a id="event_breadcrumb_link" href="#">' + current_event.name+ '</a></li>');
+		$("#home_breadcrumb").removeClass('active');
+		$("#event_breadcrumb").show();
+	}
+}
+
+function loadSeatingChart(){
+	$.get('../img/' + current_event.venue_id + '.png').done(function() { 
+        $("#seating_chart_img").append("<img src='../img/" + current_event.venue_id + ".png'>"); 
+    }).fail(function() { 
+		$.get('../img/' + current_event.venue_id + '.gif').done(function() { 
+			$("#seating_chart_img").append("<img class='img-responsive' src='../img/" + current_event.venue_id + ".gif'>"); 
+		}).fail(function() { 
+			$.get('../img/' + current_event.venue_id + '.jpg').done(function() { 
+				$("#seating_chart_img").append("<img class='img-responsive' src='../img/" + current_event.venue_id + ".jpg'>"); 
+			}).fail(function() { 
+				//No seating chart img
+			});
+		});
+    });
+}
+
+function clearSeatingChart(){
+	$("#seating_chart_img").empty();
 }

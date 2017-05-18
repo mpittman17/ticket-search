@@ -1,5 +1,8 @@
 <head>
 <script src="../js/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
 <script src="../js/ui.js"></script>
 <script src="../js/login.js"></script>
 <script src="../js/main.js"></script>
@@ -8,6 +11,7 @@
 <script src="../js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="http://mpittman.com/NCT/css/ui.css" />
 <link rel="stylesheet" type="text/css" href="http://mpittman.com/NCT/css/cerulean.bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap4.min.css" />
 </head>
 <body onload="preparePage()">
 	<nav class="navbar navbar-default">
@@ -19,15 +23,15 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		  </button>
-		  <a class="navbar-brand" href="#">Search Tickets</a>
+		  <a class="navbar-brand" href="#">Ticket Search</a>
 		</div>
 
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		  <ul class="nav navbar-nav">
-			<li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-			<li><a href="#">Link</a></li>
+			<li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
+			<li><a href="#">About</a></li>
 			<li class="dropdown">
-			  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Options <span class="caret"></span></a>
 			  <ul class="dropdown-menu" role="menu">
 				<li><a href="#">Action</a></li>
 				<li><a href="#">Another action</a></li>
@@ -47,29 +51,32 @@
 	</nav>
 
 	<br><br>
-	<div class="container-fluid">
-		<div id="stubhub_login" class="row-fluid">
+	<div id="main_container" class="container-fluid">
+		<div class="row-fluid">
+			<ul id="nav_breadcrumbs" class="breadcrumb">
+			  <li id="home_breadcrumb" class="active"><a id="home_breadcrumb_link" href="#">Home</a></li>
+			</ul>
+		</div>
+		<div id="stubhub_login" class="row-fluid hidden">
 			<div class="well bs-component col-lg-3">
 				<input id="stubhub_pw" class="login_input" type="text" placeholder="Password" required />
 				<button id="stubhub_login_button" class="btn btn-primary">Login to Stubhub</button>
 			</div>
 		</div>
-		<div class="row-fluid" id="stubhub_event_search">
-			<div id="event_search" class="well bs-component col-lg-2">
+		<div class="row-fluid clearfix" id="stubhub_event_search">
+			<div id="event_search" class="well bs-component col-lg-3">
 			  <legend>Search Team Events</legend>
 			  <label for="team_select" class="control-label">Team:</label>
 			  <select id="team_select"></select>
 			  <button id="search_events_button" type="submit" class="btn btn-primary btn-sm">Submit</button>
 			</div>
-			<div class="col-lg-1">
-			</div>
-			<div id="event_results" class="well bs-component col-lg-8">
-				<table class="table table-striped table-hover">
+			<div id="event_results" class="well bs-component col-lg-9">
+				<table id="event_results_table" class="table table-striped table-hover display">
 				  <thead>
 					<tr>
 					  <th>Date</th>
 					  <th>Event</th>
-					  <th></th>
+					  <th>Tickets</th>
 					</tr>
 				  </thead>
 				  <tbody id="event_results_rows">
@@ -77,8 +84,8 @@
 				</table>
 				</div>
 		</div>
-		<div class="row-fluid" id="stubhub_ticket_search">
-			<div id="ticket_search" class="well bs-component col-lg-2">
+		<div id="stubhub_ticket_search" class="row-fluid hidden clearfix">
+			<div id="ticket_search" class="col-lg-3">
 			  <legend>Filter Event Tickets</legend>
 			  <div class="row-fluid">
 				  <label class="control-label col-lg-4">Price:</label>
@@ -87,20 +94,32 @@
 			  </div>
 			  <div class="row-fluid">
 				  <label class="control-label col-lg-4">Section(s):</label>
-				  <input type="text" class="col-lg-8" id="section_select">
+				  <select id="section_select" class="col-lg-8" multiple="">
+					<!--<option>1</option>-->
+				  </select>
 			  </div>
 			  <div class="row-fluid">
 				  <label class="control-label col-lg-4">Row(s):</label>
-				  <input type="text" class="col-lg-8" id="row_select">
+				  <select id="row_select" class="col-lg-8" multiple="">
+					<!--<option>1</option>-->
+				  </select>
 			  </div>
-			  <div class="row-fluid">
+			  <div class="row-fluid clearfix">
 				  <button id="search_tickets_button" type="submit" class="btn btn-primary btn-sm pull-right">Submit</button>
+				  <button id="clear_tickets_filters_button" class="btn btn-default btn-sm pull-right">Clear</button>
+			  </div>
+			  <div id="seating_chart_panel" class="row-fluid">
+				<div class="panel panel-primary">
+				  <div class="panel-heading">
+					<h3 class="panel-title">Seating Chart</h3>
+				  </div>
+				  <div id="seating_chart_img" class="panel-body">
+				  </div>
+				</div>
 			  </div>
 			</div>
-			<div class="col-lg-1">
-			</div>
-			<div id="ticket_results" class="well bs-component col-lg-8">
-				<table class="table table-striped table-hover">
+			<div id="ticket_results" class="well bs-component col-lg-9">
+				<table id="ticket_results_table" class="table table-striped table-hover display">
 				  <thead>
 					<tr>
 					  <th>Section</th>
