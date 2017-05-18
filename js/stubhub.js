@@ -1,4 +1,4 @@
-var application_token = "2e772026-04d1-3cbf-89d2-e70b386c77ab";
+var application_token = "";
 var current_ticket_results;
 var current_event_results;
 
