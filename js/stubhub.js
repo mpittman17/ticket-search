@@ -1,4 +1,4 @@
-var application_token = "";
+var application_token = "2e772026-04d1-3cbf-89d2-e70b386c77ab";
 var current_ticket_results;
 var current_event_results;
 
@@ -83,18 +83,15 @@ function displayTicketResults(result){
 		sections.push(section);  
 	  }
 	  
-	  var results_html = "<tr>";
-	  results_html += "<td>" + section + "</td>";
-	  results_html += "<td>" + row + "</td>";
-	  results_html += "<td>$" + this.listingPrice.amount + "</td>";
-	  results_html += "<td><button id='buy_" + ticket_id + "' class='btn btn-primary btn-sm'>Buy Tickets</button></td>";
-	  results_html += "</tr>";
+	  ticket_results_table.row.add([section, row, this.listingPrice.amount, "<button id='buy_" + ticket_id + "' class='btn btn-primary btn-sm'>Buy Tickets</button>"]);
+	  ticket_results_table.draw();
 	  
-	  $("#ticket_results_rows").append(results_html);
 	  $("#buy_" + ticket_id).click(function() {
 		  changeView('buy');
 	  });
 	});
+	rows.sort();
+	sections.sort();
 	populateSelectOptions('row', rows);
 	populateSelectOptions('section', sections);
 }

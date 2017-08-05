@@ -12,6 +12,7 @@
 <link rel="stylesheet" type="text/css" href="http://mpittman.com/NCT/css/ui.css" />
 <link rel="stylesheet" type="text/css" href="http://mpittman.com/NCT/css/cerulean.bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap4.min.css" />
+<link rel="icon" type="image/png" href="http://mpittman.com/NCT/img/ticket.ico">
 </head>
 <body onload="preparePage()">
 	<nav class="navbar navbar-default">
@@ -23,25 +24,13 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		  </button>
-		  <a class="navbar-brand" href="#">Ticket Search</a>
+		  <a class="navbar-brand" href="http://mpittman.com/NCT">Ticket Search</a>
 		</div>
 
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		  <ul class="nav navbar-nav">
 			<li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
 			<li><a href="#">About</a></li>
-			<li class="dropdown">
-			  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Options <span class="caret"></span></a>
-			  <ul class="dropdown-menu" role="menu">
-				<li><a href="#">Action</a></li>
-				<li><a href="#">Another action</a></li>
-				<li><a href="#">Something else here</a></li>
-				<li class="divider"></li>
-				<li><a href="#">Separated link</a></li>
-				<li class="divider"></li>
-				<li><a href="#">One more separated link</a></li>
-			  </ul>
-			</li>
 		  </ul>
 		  <ul class="nav navbar-nav navbar-right">
 			<li><a href="index.php?logout">Logout <?php echo $_SESSION['user_name']; ?></a></li>
@@ -64,73 +53,95 @@
 			</div>
 		</div>
 		<div class="row-fluid clearfix" id="stubhub_event_search">
-			<div id="event_search" class="well bs-component col-lg-3">
-			  <legend>Search Team Events</legend>
-			  <label for="team_select" class="control-label">Team:</label>
-			  <select id="team_select"></select>
-			  <button id="search_events_button" type="submit" class="btn btn-primary btn-sm">Submit</button>
-			</div>
-			<div id="event_results" class="well bs-component col-lg-9">
-				<table id="event_results_table" class="table table-striped table-hover display">
-				  <thead>
-					<tr>
-					  <th>Date</th>
-					  <th>Event</th>
-					  <th>Tickets</th>
-					</tr>
-				  </thead>
-				  <tbody id="event_results_rows">
-				  </tbody>
-				</table>
+			<div id="event_search" class="bs-component col-lg-3">
+			  <div class="panel panel-primary">
+				<div class="panel-heading">
+				  <h3 class="panel-title">Search Team Events</h3>
 				</div>
+				<div class="panel-body">
+				  <label for="team_select" class="control-label">Team:</label>
+				  <select id="team_select"></select>
+				  <button id="search_events_button" type="submit" class="btn btn-primary btn-sm">Submit</button>
+				</div>
+			  </div>
+			</div>
+			<div id="event_results" class="bs-component col-lg-9">
+				<div class="panel panel-primary">
+				    <div class="panel-heading">
+					  <h3 class="panel-title" id="event_results_header">Events</h3>
+				    </div>
+				    <div class="panel-body">
+						<table id="event_results_table" class="table table-striped table-hover display">
+						  <thead>
+							<tr>
+							  <th>Date</th>
+							  <th>Event</th>
+							  <th>Tickets</th>
+							</tr>
+						  </thead>
+						  <tbody id="event_results_rows">
+						  </tbody>
+						</table>
+				    </div>
+				</div>
+			</div>
 		</div>
 		<div id="stubhub_ticket_search" class="row-fluid hidden clearfix">
 			<div id="ticket_search" class="col-lg-3">
-			  <legend>Filter Event Tickets</legend>
-			  <div class="row-fluid">
-				  <label class="control-label col-lg-4">Price:</label>
-				  <input type="text" class="col-lg-4" id="price_min" placeholder="Min">
-				  <input type="text" class="col-lg-4" id="price_max" placeholder="Max">
-			  </div>
-			  <div class="row-fluid">
-				  <label class="control-label col-lg-4">Section(s):</label>
-				  <select id="section_select" class="col-lg-8" multiple="">
-					<!--<option>1</option>-->
-				  </select>
-			  </div>
-			  <div class="row-fluid">
-				  <label class="control-label col-lg-4">Row(s):</label>
-				  <select id="row_select" class="col-lg-8" multiple="">
-					<!--<option>1</option>-->
-				  </select>
-			  </div>
-			  <div class="row-fluid clearfix">
-				  <button id="search_tickets_button" type="submit" class="btn btn-primary btn-sm pull-right">Submit</button>
-				  <button id="clear_tickets_filters_button" class="btn btn-default btn-sm pull-right">Clear</button>
-			  </div>
-			  <div id="seating_chart_panel" class="row-fluid">
 				<div class="panel panel-primary">
 				  <div class="panel-heading">
-					<h3 class="panel-title">Seating Chart</h3>
+					<h3 class="panel-title">Filter Event Tickets</h3>
 				  </div>
-				  <div id="seating_chart_img" class="panel-body">
+				  <div class="panel-body">
+					  <div class="row-fluid">
+						  <label class="control-label col-lg-4">Price:</label>
+						  <input type="text" class="col-lg-4" id="price_min" placeholder="Min">
+						  <input type="text" class="col-lg-4" id="price_max" placeholder="Max">
+					  </div>
+					  <div class="row-fluid">
+						  <label class="control-label col-lg-4">Section(s):</label>
+						  <select id="section_select" class="col-lg-8" multiple=""></select>
+					  </div>
+					  <div class="row-fluid">
+						  <label class="control-label col-lg-4">Row(s):</label>
+						  <select id="row_select" class="col-lg-8" multiple=""></select>
+					  </div>
+					  <div class="row-fluid clearfix">
+						  <button id="search_tickets_button" type="submit" class="btn btn-primary btn-sm pull-right">Submit</button>
+						  <button id="clear_tickets_filters_button" class="btn btn-default btn-sm pull-right">Clear</button>
+					  </div>
 				  </div>
 				</div>
-			  </div>
+			    <div id="seating_chart_panel" class="row-fluid">
+				  <div class="panel panel-primary">
+				    <div class="panel-heading">
+					  <h3 class="panel-title">Seating Chart</h3>
+				    </div>
+				    <div id="seating_chart_img" class="panel-body">
+				    </div>
+				  </div>
+			    </div>
 			</div>
-			<div id="ticket_results" class="well bs-component col-lg-9">
-				<table id="ticket_results_table" class="table table-striped table-hover display">
-				  <thead>
-					<tr>
-					  <th>Section</th>
-					  <th>Row</th>
-					  <th>Price</th>
-					  <th></th>
-					</tr>
-				  </thead>
-				  <tbody id="ticket_results_rows">
-				  </tbody>
-				</table>
+			<div id="ticket_results" class="bs-component col-lg-9">
+				<div class="panel panel-primary">
+				  <div class="panel-heading">
+					<h3 class="panel-title" id="ticket_results_header">Available Tickets</h3>
+				  </div>
+				  <div class="panel-body">
+				  	<table id="ticket_results_table" class="table table-striped table-hover display">
+					  <thead>
+						<tr>
+						  <th>Section</th>
+						  <th>Row</th>
+						  <th>Price</th>
+						  <th></th>
+						</tr>
+					  </thead>
+					  <tbody id="ticket_results_rows">
+					  </tbody>
+					</table>
+				  </div>
+				</div>
 			</div>
 		</div>
 	</div>

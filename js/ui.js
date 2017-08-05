@@ -1,13 +1,24 @@
 var event_results_table;
+var ticket_results_table;
 var current_event;
+var current_team_id;
 
 //Initial load/setup
 function readyUI(){
+	 $(".dropdown-toggle").dropdown();
 	event_results_table = $('#event_results_table').DataTable({
 	    "columns": [
 		{ "width": "15%" },
 		{ "width": "70%" },
 		{ "width": "15%" }
+	  ]
+	});
+	ticket_results_table = $('#ticket_results_table').DataTable({
+	    "columns": [
+		{ "width": "80%" },
+		{ "width": "5%" },
+		{ "width": "5%" },
+		{ "width": "10%" }
 	  ]
 	});
 	populateTeamSelect();
@@ -21,8 +32,8 @@ function readyUI(){
 	$("#search_events_button").click(function() {
 		clearEventResults();
 		var team_select_id = $("#team_select").children(":selected").attr("id");
-		var team_id = team_select_id.substring(5, team_select_id.length);
-		getEvents(team_id);
+		current_team_id = team_select_id.substring(5, team_select_id.length);
+		getEvents(current_team_id);
 	});
 	$("#search_tickets_button").click(function() {
 		clearTicketResults();
@@ -42,6 +53,7 @@ function readyUI(){
 		filterTickets(filters);
 	});
 	$("#clear_tickets_filters_button").click(function() {
+		clearTicketResults();
 		changeView('ticket');
 	});
 }
@@ -59,6 +71,7 @@ function changeView(view){
 		hideStubhubTicketSearch();
 		showStubhubEventSearch();
 		$("#home_breadcrumb").siblings().remove();
+		clearTicketResults();
 		clearSeatingChart();
 	}
 	if(view == 'ticket'){
@@ -76,6 +89,7 @@ function changeView(view){
 
 function populateTeamSelect(){
 	var teams_html = "";
+	teams.sort(sortByName);
 	$.each(teams, function() {
 	  teams_html += "<option id='team_" + this.id + "'>" + this.name + "</option>";
 	});
@@ -104,16 +118,17 @@ function clearEventResults(){
 	event_results_table.draw();
 }
 
+function clearTicketResults(){
+	ticket_results_table.clear();
+	ticket_results_table.draw();
+}
+
 function hideStubhubTicketSearch(){
 	$("#stubhub_ticket_search").addClass('hidden');;
 }
 
 function showStubhubTicketSearch(){
 	$("#stubhub_ticket_search").removeClass('hidden');
-}
-
-function clearTicketResults(){
-	$("#ticket_results_rows").empty();
 }
 
 function hideBuyModal(){
@@ -125,14 +140,17 @@ function showBuyModal(){
 }
 
 function showEventBreadcrumb(){
+	console.log(current_event);
 	if(!$("#event_breadcrumb").hasClass('active')){
 		$("#nav_breadcrumbs").append('<li id="event_breadcrumb" class="active"><a id="event_breadcrumb_link" href="#">' + current_event.name+ '</a></li>');
+		//$("#nav_breadcrumbs").append('<li class="pull-right"><img src="' + getTeamIconPath(current_team_id) + '"></li>');
 		$("#home_breadcrumb").removeClass('active');
 		$("#event_breadcrumb").show();
 	}
 }
 
 function loadSeatingChart(){
+	clearSeatingChart();
 	$.get('../img/' + current_event.venue_id + '.png').done(function() { 
         $("#seating_chart_img").append("<img src='../img/" + current_event.venue_id + ".png'>"); 
     }).fail(function() { 
@@ -142,7 +160,7 @@ function loadSeatingChart(){
 			$.get('../img/' + current_event.venue_id + '.jpg').done(function() { 
 				$("#seating_chart_img").append("<img class='img-responsive' src='../img/" + current_event.venue_id + ".jpg'>"); 
 			}).fail(function() { 
-				//No seating chart img
+				console.log("No seating chart found!");
 			});
 		});
     });
