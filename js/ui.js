@@ -3,8 +3,8 @@ var ticket_results_table;
 var current_event;
 var current_team_id;
 
-//Initial load/setup
-function readyUI(){
+//Initial load/setup of Home page
+function readyHomeUI(){
 	 $(".dropdown-toggle").dropdown();
 	event_results_table = $('#event_results_table').DataTable({
 	    "columns": [
@@ -58,6 +58,11 @@ function readyUI(){
 	});
 }
 
+//Initial load/setup of Watching page
+function readyWatchingUI(){
+	
+}
+
 //Switch from one view to another
 //Views: Login View, Event View, Ticket View
 function changeView(view){
@@ -81,9 +86,13 @@ function changeView(view){
 		showEventBreadcrumb();
 		loadSeatingChart();
 		showStubhubTicketSearch();
+		initializeEventWatchButton();
 	}
 	if(view == 'buy'){
 		showBuyModal();
+	}
+	if(view == 'watch_modal'){
+		showWatchModal();
 	}
 }
 
@@ -139,6 +148,14 @@ function showBuyModal(){
 	$('#buy_modal').modal('show');
 }
 
+function hideWatchModal(){
+	$('#watch_modal').modal('hide');
+}
+
+function showWatchModal(){
+	$('#watch_modal').modal('show');
+}
+
 function showEventBreadcrumb(){
 	console.log(current_event);
 	if(!$("#event_breadcrumb").hasClass('active')){
@@ -147,6 +164,12 @@ function showEventBreadcrumb(){
 		$("#home_breadcrumb").removeClass('active');
 		$("#event_breadcrumb").show();
 	}
+}
+
+function initializeEventWatchButton(){
+	$("#watch_event_button").click(function() {
+		changeView('watch_modal');
+	});
 }
 
 function loadSeatingChart(){

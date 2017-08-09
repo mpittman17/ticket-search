@@ -30,7 +30,7 @@ if (isset($login)) {
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap4.min.css" />
 <link rel="icon" type="image/png" href="http://mpittman.com/NCT/img/ticket.ico">
 </head>
-<body onload="preparePage()">
+<body onload="preparePage('home')">
 	<nav class="navbar navbar-default">
 	  <div class="container-fluid">
 		<div class="navbar-header">
@@ -99,6 +99,7 @@ if (isset($login)) {
 				<div class="panel panel-primary">
 				    <div class="panel-heading">
 					  <h3 class="panel-title" id="event_results_header">Events</h3>
+					  <button id="watch_event_button" type="submit" class="btn btn-primary btn-sm pull-right"><img id='watch_icon' src='../img/eye.png'></button>
 				    </div>
 				    <div class="panel-body">
 						<table id="event_results_table" class="table table-striped table-hover display">
